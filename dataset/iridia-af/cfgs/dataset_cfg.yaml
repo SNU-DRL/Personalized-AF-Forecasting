@@ -1,0 +1,28 @@
+# lead 1 (for ICENTIA11K external validation)
+
+DATASET: IRIDIA-AF
+SAMPLING_RATE: 250
+DATA_BASE_PATH: /data4/ecg_data/iridia-af/
+DATA_PATH_LIST:
+  - /data4/ecg_data/iridia-af/iridia-af-records-v1.0.1
+DATA_BUILD_PATH: /data4/ecg_data/iridia-af/dataset_final
+DATA_STRING: 1
+
+AF_BURDEN_THRESHOLD: 0.6
+EPISODE_LENGTH_SEC: 300   # seconds
+AF_DISTANCE_SEC: 1 # seconds
+NON_AF_DISTANCE_SEC: 1200 # seconds
+
+PERSONALIZED_MIN_LENGTH_POINTS: 0
+PERSONALIZED_TRAINING_DAYS: 1 # how many days are used for personalized training?
+PERSONALIZED_MIN_EPISODES: 2 # minimum number of episodes for label 1, personalized training & test
+NUM_VALIDATION: 0
+NUM_TEST: -1 # assign all samples that meet criteria to test set
+
+MAX_NUM_LABEL_1: 10 # maximum number of label 1 samples for each patient
+MIN_NUM_LABEL_0: 2 # minimum number of label 0 samples for each patient (only when label 0 spans exist)
+LABEL_0_FACTOR: 2 # how many label 0 samples will be drawn... N times of label 1 samples
+LABEL_2_FACTOR: 1 # how many label 2 samples will be drawn... N times of label 1 samples
+
+WINDOW_SEC: 60
+STRIDE_SEC: 10

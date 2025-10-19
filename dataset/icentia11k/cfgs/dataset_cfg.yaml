@@ -1,0 +1,36 @@
+DATASET: ICENTIA11K
+SAMPLING_RATE: 250
+LEN_RECORDING: 1048577
+DATA_BASE_PATH: /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0
+DATA_PATH_LIST:
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p00
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p01
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p02
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p03
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p04
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p05
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p06
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p07
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p08
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p09
+  - /data4/ecg_data/icentia11k/icentia11k-single-lead-continuous-raw-electrocardiogram-dataset-1.0/p10
+DATA_BUILD_PATH: /data4/ecg_data/icentia11k/dataset_final
+
+AF_BURDEN_THRESHOLD: 0.6
+EPISODE_LENGTH_SEC: 300   # seconds
+AF_DISTANCE_SEC: 1 # seconds
+NON_AF_DISTANCE_SEC: 1200 # seconds
+
+PERSONALIZED_MIN_NUM_SEGMENTS: 50 # samples used for personalization should have minimum 50 segments
+PERSONALIZED_TRAINING_SEGMENTS: 20 # how many segments are used for personalized training?
+PERSONALIZED_MIN_EPISODES: 2  # minimum number of episodes for label 1, personalized training & test
+NUM_VALIDATION: 43
+NUM_TEST: 30
+
+MAX_NUM_LABEL_1: 10 # maximum number of label 1 samples for each patient
+MIN_NUM_LABEL_0: 2 # minimum number of label 0 samples for each patient (only when label 0 spans exist)
+LABEL_0_FACTOR: 2 # how many label 0 samples will be drawn... N times of label 1 samples
+LABEL_2_FACTOR: 1 # how many label 2 samples will be drawn... N times of label 1 samples
+
+WINDOW_SEC: 60
+STRIDE_SEC: 10
