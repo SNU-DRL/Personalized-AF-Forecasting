@@ -107,7 +107,7 @@ if __name__ == "__main__":
     # Verify arguments
     if args.mode in ["evaluation"]:
         assert os.path.isfile(args.model_load_path) == True
-    if args.mode in ["fit", "training"]:
+    if args.mode in ["fit"]:
         os.makedirs(args.model_save_dir, exist_ok=True)
     
     main(args)

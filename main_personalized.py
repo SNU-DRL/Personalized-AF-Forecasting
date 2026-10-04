@@ -8,7 +8,6 @@ import random
 import pandas as pd
 import torch
 
-from src.attribution import ATTRIBUTION_METHODS
 from src.dataset import PAFDataModule
 from src.models.model_wrapper import ModelWrapper
 from src.setup import setup
@@ -122,10 +121,9 @@ def main(args):
             p_trainer.fit(p_train_loader, p_eval_loader, args.epochs)
         if args.mode in ["evaluation"]:
             p_trainer.evaluate(p_eval_loader)
-        if args.mode == "attribution":
-            p_trainer.attribute(p_eval_loader, args.attr_method)
 
     eval_metrics = None
+    last_epoch = None
     for patient_result_dir in patient_result_dir_list:
         try:
             _eval_metrics = pd.read_csv(os.path.join(patient_result_dir, "eval_metrics.csv"))
@@ -141,7 +139,10 @@ def main(args):
             eval_metrics = pd.concat([eval_metrics, _eval_metrics], ignore_index=True)
             
     # Similar to analysis/process_metrics.py
-    eval_metrics = eval_metrics.drop(['epoch','train_loss','val_loss','auprc_baseline','tn','fp','fn','tp','threshold'], axis=1)
+    if eval_metrics is None:
+        print("No patient-level eval_metrics.csv was found: skip aggregation")
+        return
+    eval_metrics = eval_metrics.drop(['epoch','train_loss','val_loss','auprc_baseline','tn','fp','fn','tp','threshold'], axis=1, errors='ignore')
     eval_metrics_by_blocks = eval_metrics.groupby(['block'], sort=False, as_index=False).agg(['mean']) # ignoring NaNs
     eval_metrics_by_blocks.columns = eval_metrics_by_blocks.columns.map(lambda x: x[0])
     eval_metrics_by_blocks['epoch'] = last_epoch
@@ -178,7 +179,6 @@ if __name__ == "__main__":
 
     # Settings
     parser.add_argument('--mode', type=str, choices=["fit", "evaluation"], default="fit", help="fit: training(+evaluation)")
-    parser.add_argument('--attr_method', default="gradcam", type=str, choices=ATTRIBUTION_METHODS.keys())
     parser.add_argument('--gpu_num', type=str, default='0')
     parser.add_argument('--seed', type=int, default='42')
     parser.add_argument('--include_af_episodes', action='store_true')
@@ -199,9 +199,7 @@ if __name__ == "__main__":
     print(json.dumps(vars(args), indent=4))
 
     # Verify arguments
-    if args.mode in ["evaluation", "attribution"]:
+    if args.mode in ["evaluation"]:
         assert os.path.isfile(args.model_load_path) == True
-    if args.mode in "attribution":
-        args.batch_size = 1 # set batch size to 1 for running attribution methods
 
     main(args)

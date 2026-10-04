@@ -26,13 +26,11 @@ def main(args):
         patient_dirs = {episode.patient_dir for episode in eval_episodes} # Set
     print(f"Number of patients used for personalization: {len(patient_dirs)}")
     
-    patient_result_dir_list = []
     for patient_dir in patient_dirs:
         patient_phase, patient_id = patient_dir.split("/")[-2], patient_dir.split("/")[-1]
         patient_dirname = f"{patient_phase}@{patient_id}"
         patient_result_dir = f"{args.result_dir}/{patient_dirname}"
         os.makedirs(patient_result_dir, exist_ok=True)
-        patient_result_dir_list.append(patient_result_dir)
         print(f"Processing: {patient_dirname}")
         
         # load proper models here...        
@@ -82,7 +80,6 @@ if __name__ == "__main__":
 
     # Model
     parser.add_argument('--model_load_dir', type=str, default=None) # For testing trained model
-    parser.add_argument('--use_feature', action='store_true')
     
     # Settings
     parser.add_argument('--attr_method', default="guided_gradcam", type=str, choices=ATTRIBUTION_METHODS.keys())
