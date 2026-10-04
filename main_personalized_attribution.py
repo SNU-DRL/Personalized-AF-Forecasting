@@ -53,7 +53,7 @@ def main(args):
             continue
         
         # Dataset
-        p_data_module = PAFDataModule(None, p_eval_episodes, args.sampling_rate, use_standardization=args.use_standardization, mean_dict=mean_dict)
+        p_data_module = PAFDataModule(None, p_eval_episodes, args.sampling_rate, mean_dict=mean_dict)
         p_eval_loader = p_data_module.eval_dataloader(args.batch_size) # evaluation only
         
         # additional paths
@@ -62,10 +62,8 @@ def main(args):
         }
         
         # Training setup & Hparams
-        p_trainer = Trainer(p_model, None, None, None, model_kwargs, device)
-        
-        if args.mode == "attribution":
-            p_trainer.attribute(p_eval_loader, args.attr_method)
+        p_trainer = Trainer(p_model, None, None, None, model_kwargs, device)        
+        p_trainer.attribute(p_eval_loader, args.attr_method)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -90,7 +88,6 @@ if __name__ == "__main__":
     parser.add_argument('--attr_method', default="guided_gradcam", type=str, choices=ATTRIBUTION_METHODS.keys())
     parser.add_argument('--gpu_num', type=str, default='0')
     parser.add_argument('--seed', type=int, default='42')
-    parser.add_argument('--use_standardization', action='store_true') # not used
 
     # Result
     parser.add_argument('--result_dir', type=str, default='./results_demo_personalized_attribution')

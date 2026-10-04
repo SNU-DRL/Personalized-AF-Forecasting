@@ -25,7 +25,6 @@ class PAFDataModule:
         sampling_rate: int=250,
         sampler: bool=False,
         include_af_episodes: bool=False,
-        use_standardization: bool=True,
         use_augmentation: bool=False,
         mean_dict: dict=None,
     ):
@@ -48,9 +47,9 @@ class PAFDataModule:
                     if not is_low_signal_window(window.recording, sampling_rate): # filter out low signal windows
                         self.train_windows.append(window)
             if use_augmentation:
-                self.train_set = PAFWindowDataset(self.train_windows, sampling_rate, shuffle=True, use_standardization=use_standardization, features_mean_dict=self.mean_dict, transform=transform(0.3))
+                self.train_set = PAFWindowDataset(self.train_windows, sampling_rate, shuffle=True, features_mean_dict=self.mean_dict, transform=transform(0.3))
             else:
-                self.train_set = PAFWindowDataset(self.train_windows, sampling_rate, shuffle=True, use_standardization=use_standardization, features_mean_dict=self.mean_dict)
+                self.train_set = PAFWindowDataset(self.train_windows, sampling_rate, shuffle=True, features_mean_dict=self.mean_dict)
             if self.mean_dict is None:
                 self.mean_dict = self.train_set.features_mean_dict
             print(f"Loaded dataset for training: {len(self.train_set)}")
@@ -61,7 +60,7 @@ class PAFDataModule:
                 if eval_episode.label == 2:
                     continue
                 self.eval_windows += list(eval_episode.windows.values())
-            self.eval_set = PAFWindowDataset(self.eval_windows, sampling_rate, shuffle=False, use_standardization=use_standardization, features_mean_dict=self.mean_dict)
+            self.eval_set = PAFWindowDataset(self.eval_windows, sampling_rate, shuffle=False, features_mean_dict=self.mean_dict)
             print(f"Loaded dataset for evaluation: {len(self.eval_set)}")
 
     @classmethod
@@ -72,7 +71,6 @@ class PAFDataModule:
         sampling_rate: int=250,
         sampler: bool=False,
         include_af_episodes: bool=False,
-        use_standardization: bool=True,
         use_augmentation: bool=False,
         mean_dict: dict=None,
     ):
@@ -89,7 +87,7 @@ class PAFDataModule:
                 serialized = fp.read()
             eval_episodes = pickle.loads(serialized)
         
-        return cls(train_episodes, eval_episodes, sampling_rate, sampler, include_af_episodes, use_standardization, use_augmentation, mean_dict)
+        return cls(train_episodes, eval_episodes, sampling_rate, sampler, include_af_episodes, use_augmentation, mean_dict)
     
     def train_dataloader(self, batch_size=32):
         if self.train_set is None:
@@ -114,7 +112,7 @@ class PAFDataModule:
         return DataLoader(self.eval_set, pin_memory=True, batch_size=batch_size, shuffle=False)
 
 class PAFWindowDataset(Dataset): # unit: window
-    def __init__(self, windows: List, sampling_rate: int, shuffle: bool=True, use_standardization: bool=True, features_mean_dict: dict=None, transform=lambda x: x):
+    def __init__(self, windows: List, sampling_rate: int, shuffle: bool=True, features_mean_dict: dict=None, transform=lambda x: x):
         self.windows = windows
         self.transform = transform
         
@@ -158,7 +156,7 @@ class PAFWindowDataset(Dataset): # unit: window
         
         self.preprocess_features()
         
-        recordings = preprocess_recording(np.array(recording_list), fs=sampling_rate, standardize=use_standardization)
+        recordings = preprocess_recording(np.array(recording_list), fs=sampling_rate)
         recordings = torch.tensor(recordings, dtype=torch.float32).unsqueeze(1).unsqueeze(1)
         self.recordings = recordings
         

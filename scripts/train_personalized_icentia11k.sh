@@ -10,10 +10,10 @@ MODEL_BASE_PATH=results_global/$EXP_NAME
 BATCH_SIZE=32
 LEARNING_RATE=1e-3
 WEIGHT_DECAY=1e-4
-EPOCHS=3
+EPOCHS=5
 
 # Settings
-GPU_NUM=1
+GPU_NUM=0
 
 mkdir results_personalized_icentia11k
 

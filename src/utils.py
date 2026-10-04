@@ -5,12 +5,10 @@ from scipy.signal import butter, sosfilt
 from sklearn import metrics
 
 
-def preprocess_recording(recording, fs, standardize=False):
+def preprocess_recording(recording, fs):
     recording_m = recording - recording.mean(axis=1, keepdims=True)
     recording = butter_highpass_filter(recording_m, 0.5, fs)
     recording = recording - recording.mean(axis=1, keepdims=True)
-    if standardize:
-        recording = recording / (recording.std(axis=1, keepdims=True)+ 1e-6)
     return recording
 
 # https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter

@@ -27,7 +27,7 @@ def main(args):
             print("Warning: `load_mean_dict` was set to true, but no model was loaded. The mean_dict will be calculated using the training set.")
 
     # dataloader
-    data_module = PAFDataModule.from_datapath(args.train_data_path, args.eval_data_path, args.sampling_rate, args.sampler, args.include_af_episodes, args.use_standardization, args.use_augmentation, mean_dict)
+    data_module = PAFDataModule.from_datapath(args.train_data_path, args.eval_data_path, args.sampling_rate, args.sampler, args.include_af_episodes, args.use_augmentation, mean_dict)
     model.mean_dict = data_module.mean_dict
     train_loader = data_module.train_dataloader(args.batch_size)
     eval_loader = data_module.eval_dataloader(args.batch_size)
@@ -38,8 +38,6 @@ def main(args):
         "eval_metrics_path": args.eval_metrics_path,
         "eval_preds_path": args.eval_preds_path,
         "model_save_dir": args.model_save_dir,
-        "episode_eval": args.episode_eval,
-        "episode_eval_strategy": args.episode_eval_strategy,
     }
 
     # hparams
@@ -87,7 +85,6 @@ if __name__ == "__main__":
     parser.add_argument('--gpu_num', type=str, default='0')
     parser.add_argument('--seed', type=int, default='42')
     parser.add_argument('--include_af_episodes', action='store_true')
-    parser.add_argument('--use_standardization', action='store_true')
     parser.add_argument('--use_augmentation', action='store_true')
     
     # Result

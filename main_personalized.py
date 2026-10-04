@@ -97,7 +97,7 @@ def main(args):
         patient_result_dir_list.append(patient_result_dir)
         
         # Dataset
-        p_data_module = PAFDataModule(p_train_episodes, p_eval_episodes, args.sampling_rate, args.sampler, args.include_af_episodes, args.use_standardization, args.use_augmentation, mean_dict)
+        p_data_module = PAFDataModule(p_train_episodes, p_eval_episodes, args.sampling_rate, args.sampler, args.include_af_episodes, args.use_augmentation, mean_dict)
         p_train_loader = p_data_module.train_dataloader(args.batch_size)
         p_eval_loader = p_data_module.eval_dataloader(args.batch_size)
         
@@ -107,8 +107,6 @@ def main(args):
             "model_save_dir": f"{patient_result_dir}/checkpoints",
             "eval_metrics_path": f"{patient_result_dir}/eval_metrics.csv",
             "eval_preds_path": f"{patient_result_dir}/eval_preds.csv",
-            "episode_eval": args.episode_eval,
-            "episode_eval_strategy": args.episode_eval_strategy,
         }
         
         # Training setup & Hparams
@@ -184,7 +182,6 @@ if __name__ == "__main__":
     parser.add_argument('--gpu_num', type=str, default='0')
     parser.add_argument('--seed', type=int, default='42')
     parser.add_argument('--include_af_episodes', action='store_true')
-    parser.add_argument('--use_standardization', action='store_true')
     parser.add_argument('--use_augmentation', action='store_true')
     parser.add_argument('--freeze_layers_upto', type=int, default=-1, help='freeze layers upto layer (0 ~ #layers-1). fine-tune all when -1.')
     parser.add_argument('--force_num_episodes', type=int, default=-1, help='sensitivity study: number of samples used in training')

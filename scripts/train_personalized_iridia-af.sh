@@ -13,7 +13,7 @@ WEIGHT_DECAY=1e-4
 EPOCHS=3
 
 # Settings
-GPU_NUM=6
+GPU_NUM=0
 
 mkdir results_personalized_iridia-af
 

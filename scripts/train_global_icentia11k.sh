@@ -7,9 +7,9 @@ ARCH="resnet18_15"
 
 # Hyperparameters
 BATCH_SIZE=128
-LEARNING_RATE=1e-1
+LEARNING_RATE=5e-3
 WEIGHT_DECAY=1e-4
-EPOCHS=5
+EPOCHS=3
 
 # Settings
 GPU_NUM=0

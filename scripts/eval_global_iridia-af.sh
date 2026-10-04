@@ -7,7 +7,7 @@ EXP_NAME=resnet18_15_bs128_lr5e-3_wd1e-4_ep3
 MODEL_BASE_PATH=results_global/$EXP_NAME
 
 # Settings
-GPU_NUM=7
+GPU_NUM=0
 
 mkdir results_personalized_iridia-af
 

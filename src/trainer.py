@@ -195,10 +195,6 @@ class Trainer:
         labels = []
         eval_results_dict = OrderedDict() # includes blockwise evaluation results
         
-        # for episode_evaluation
-        episode_probs = []
-        episode_labels = []
-        
         with torch.no_grad():
             for idx_batch, data_batch in enumerate(pbar := tqdm(loader)):
                 xid, x, y, feature, rr = data_batch
@@ -220,12 +216,11 @@ class Trainer:
         labels = torch.tensor(labels).detach().cpu().numpy()
         probs = torch.tensor(probs).detach().cpu().numpy()
         
-        # annotate windows with episode, block info
+        # annotate windows with block info
         windows = []
         for idx, xid in enumerate(xids):
-            episode, block = xid.split("|")
+            _, block = xid.split("|")
             windows.append({
-                "episode": episode,
                 "block": block, # (block == window_str in ECGWindow)
                 "label": labels[idx],
                 "prob": probs[idx]
@@ -233,28 +228,6 @@ class Trainer:
         
         metrics_dict_all = compute_metrics(labels, probs, threshold)
         eval_results_dict["all"] = metrics_dict_all
-        
-        # Episode evaluation
-        if self.model_kwargs["episode_eval"]:
-            episode_labels = []
-            episode_probs = []
-            
-            all_episodes = list(map(lambda x: x["episode"], windows))
-            for episode in np.unique(all_episodes):
-                episode_windows = list(filter(lambda x: x["episode"] == episode, windows))
-                episode_label = episode_windows[0]["label"].item()
-                episode_window_probs = list(map(lambda x: x["prob"], episode_windows))
-                if self.model_kwargs["episode_eval_strategy"] == "max":
-                    episode_prob = max(episode_window_probs)
-                elif self.model_kwargs["episode_eval_strategy"] == "mean":
-                    episode_prob = np.mean(episode_window_probs)
-                else:
-                    raise NotImplementedError("episode_eval_strategy not implemented")
-                episode_labels.append(episode_label)
-                episode_probs.append(episode_prob)    
-            
-            metrics_dict_episode = compute_metrics(np.array(episode_labels), np.array(episode_probs), threshold)
-            eval_results_dict["episode"] = metrics_dict_episode
         
         # Block-wise evaluation
         all_blocks = list(map(lambda x: x["block"], windows))
